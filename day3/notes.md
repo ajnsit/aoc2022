@@ -56,3 +56,13 @@
 # Other new Things I learnt
 
 None
+
+---
+
+# Improvements made afterwards / Comments by other people
+
+1. Use `collect::<Vec<_>>()` instead of `collect::<Vec<u32>>()`.
+2. Use range pattern matching - `..=`
+3. Use `b'a'` to get a `u8` value for a char `'a'`.
+4. Use `copied()` instead of `.map(|x| *x*)`. (Or `cloned()`, when the elements are `Clone`). This communicates the intent better, since the dereference won't work with elements which are not `Copy`.
+5. Rust won't add `intersection` for iterators since it requires extra allocation. So yes, the way I did a 3 way intersection was fine.

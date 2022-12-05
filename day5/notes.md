@@ -2,7 +2,7 @@
 
 1. How do I skip over the last line of an iterator? Looks like it can't be done (makes sense). You have to `collect().pop()`.
 
-2. Is it possible to iterate over some elements of a vec, generate a structure, and then continue processing the remaining elements of the vec? I didn't spend enough time exploring this because I decided to split the problem into into two parts with `split_once("\n\n")` and process the parts separately. So this is still TODO.
+2. Is it possible to iterate over some elements of a vec, generate a structure, and then continue processing the remaining elements of the vec? I didn't spend enough time exploring this because I decided to split the problem input into two parts with `split_once("\n\n")` and process the parts separately. So this is still TODO.
 
 # Irritants
 

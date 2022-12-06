@@ -29,7 +29,7 @@ fn solver<const N: usize>() {
                 let (_, dups) = x.partition_dedup();
                 dups.len() == 0
             })
-            .map(|(i, s)| (i + 14, s))
+            .map(|(i, s)| (i + N, s))
             .next()
             .unwrap()
     );

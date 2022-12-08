@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 fn main() {
     part1();
     part2();
@@ -11,14 +9,38 @@ fn part1() {
         commands(input())
             .heal()
             .sized()
-            .hash()
-            .into_iter()
-            .filter_map(|(_, x)| if x <= 100000 { Some(x) } else { None })
+            .linear_fold(vec![], &|mut v, x| if x <= 100000 {
+                v.push(x);
+                v
+            } else {
+                v
+            })
+            .iter()
             .sum::<usize>()
     );
 }
 
-fn part2() {}
+fn part2() {
+    let total = 70000000;
+    let required = 30000000;
+    let tree = commands(input()).heal().sized();
+    let used = tree.tag();
+    let unused = total - used;
+    let tofree = required - unused;
+    println!(
+        "{:?}",
+        tree.linear_fold(vec![], &|mut v, x| {
+            if x >= tofree {
+                v.push(x);
+                v
+            } else {
+                v
+            }
+        })
+        .iter()
+        .fold(total, |x, y| x.min(*y))
+    );
+}
 
 #[derive(Debug)]
 enum ChangeDir {
@@ -40,7 +62,7 @@ enum TreeF<C> {
 }
 
 impl TreeF<()> {
-    fn fill(&self) -> Tree {
+    fn _fill(&self) -> Tree {
         match self {
             TreeF::File(n, s) => file(n.clone(), *s),
             TreeF::Directory(n, _) => directory(n.clone(), vec![]),
@@ -90,22 +112,19 @@ impl<T: Copy> TaggedTree<T> {
         }
     }
 
-    fn hash(&self) -> HashMap<String, T> {
-        let mut res = HashMap::new();
-        self.hash_mut(&mut res);
-        res
-    }
-
-    fn hash_mut(&self, res: &mut HashMap<String, T>) {
+    fn linear_fold<A>(&self, init: A, f: &dyn Fn(A, T) -> A) -> A {
         match self {
             TaggedTree::TaggedTree(x, t) => match x {
-                TreeF::File(_n, _s) => {
-                    // res.insert(n.to_owned(), *t);
+                TreeF::Directory(_n, cs) => {
+                    let init1 = f(init, *t);
+                    cs.iter().fold(init1, |a, tree| match tree {
+                        TaggedTree::TaggedTree(y, _) => match y {
+                            TreeF::Directory(_, _) => tree.linear_fold(a, f),
+                            _ => a,
+                        },
+                    })
                 }
-                TreeF::Directory(n, cs) => {
-                    res.insert(n.to_owned(), *t);
-                    cs.iter().for_each(|c| c.hash_mut(res));
-                }
+                _ => init,
             },
         }
     }
@@ -247,8 +266,8 @@ fn directory(name: String, children: Vec<Tree>) -> Tree {
 }
 
 fn input() -> Vec<&'static str> {
-    // include_str!("../input.txt")[2..]
-    include_str!("../test.txt")[2..]
+    include_str!("../input.txt")[2..]
+        // include_str!("../test.txt")[2..]
         .split("\n$ ")
         .collect::<Vec<_>>()
 }

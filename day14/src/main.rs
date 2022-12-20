@@ -1,6 +1,6 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
-use itertools::{iterate, Either};
+use itertools::Either;
 
 fn main() {
     part1();

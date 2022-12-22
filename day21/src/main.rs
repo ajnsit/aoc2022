@@ -8,8 +8,9 @@ fn main() {
 }
 
 fn part1() {
-    // dbg!(input());
-    dbg!(yell("root", &mut input()));
+    let mut i = input();
+    dbg!(&i);
+    dbg!(yell("root", &mut i));
 }
 
 fn part2() {}
@@ -55,25 +56,24 @@ fn yell(name: &str, monkeys: &mut HashMap<String, Monkey>) -> isize {
 }
 
 fn input() -> HashMap<String, Monkey> {
+    let reg1 = Regex::new(r"(\w+): (.+)").unwrap();
+    let reg_op = Regex::new(r"(\w+) (.) (\w+)").unwrap();
+    let reg_num = Regex::new(r"(\d+)").unwrap();
     include_str!("../input.txt")
         // include_str!("../test.txt")
         .lines()
         .map(|s| {
-            let captures1 = Regex::new(r"(\w+): (.+)")
-                .unwrap()
+            let captures1 = reg1
                 .captures(s)
                 .expect(&format!("Unable to parse string: {:?}", s));
             let name = captures1[1].to_owned();
             let val = captures1[2].to_owned();
-            let captures_op = Regex::new(r"(\w+) (.) (\w+)");
-            let captures_num = Regex::new(r"(\d+)");
             (
                 name.clone(),
-                captures_op
-                    .unwrap()
+                reg_op
                     .captures(&val)
                     .map(|c| Monkey::Op(op(&c[2]), c[1].to_owned(), c[3].to_owned()))
-                    .or(captures_num.unwrap().captures(&val).map(|c| {
+                    .or(reg_num.captures(&val).map(|c| {
                         let v = c[1].parse::<isize>().unwrap();
                         if name == "humn" {
                             Monkey::Var(v)
